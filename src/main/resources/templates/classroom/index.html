@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Class Room</title>
+    <th:block th:include="/include/head"></th:block></head>
+<body>
+<th:block th:include="/include/header"></th:block>
+<h1>List Classrooms</h1>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Class Rooms</h1>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+        <button style="border: none; float: right;margin-bottom:10px" class="btn btn-primary"><a style="text-decoration: none; color: white; float: right;" href="/classrooms/create">+ Create</a> </button>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Number</th>
+            <th>Action</th>
+            <!-- Add more columns as needed -->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="classRoom : ${classRooms}">
+            <td th:text="${classRoom.id_class}"></td>
+            <td th:text="${classRoom.class_name}"></td>
+            <td th:text="${classRoom.number_member}"></td>
+            <td>
+                <a th:href="@{/classrooms/edit/{id}(id=${classRoom.id_class})}" class="btn btn-primary btn-sm">Edit</a>
+                <a th:href="@{/classrooms/delete/{id}(id=${classRoom.id_class})}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+            <!-- Add more data as needed -->
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<th:block th:include="/include/footer"></th:block>
+</body>
+</html>

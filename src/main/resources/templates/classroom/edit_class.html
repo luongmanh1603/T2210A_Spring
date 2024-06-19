@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Class Room</title>
+    <th:block th:include="/include/head"></th:block>
+</head>
+<body>
+
+<th:block th:include="/include/header"></th:block>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Edit Class Room</h1>
+    <form th:action="@{/classrooms/edit/{id}(id=${classRoom.id_class})}" th:object="${classRoom}" method="post">
+        <input type="hidden" th:field="*{id_class}" />
+        <div class="form-group">
+            <label for="class_name">Class Name</label>
+            <input type="text" th:field="*{class_name}" class="form-control" id="class_name">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<th:block th:include="/include/footer"></th:block>
+
+</body>
+</html>
