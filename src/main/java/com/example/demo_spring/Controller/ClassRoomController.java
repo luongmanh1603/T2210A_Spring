@@ -85,7 +85,7 @@ public class ClassRoomController {
         this.classRoomService = classRoomService;
     }
 
-    @GetMapping("/list")
+    @GetMapping("")
     public String getClassRoomList(Model model) {
         List<ClassRoom> classRooms = classRoomService.getAllClassRooms();
         for (ClassRoom classRoom : classRooms) {
@@ -107,7 +107,7 @@ public class ClassRoomController {
     @PostMapping("/create")
     public String createClassRoom(@ModelAttribute ClassRoom classRoom) {
         classRoomService.saveClassRoom(classRoom);
-        return "redirect:/classrooms/list";
+        return "redirect:/classrooms";
     }
     @GetMapping("/edit/{id}")
     public String editClassRoom(@PathVariable Integer id, Model model) {

@@ -12,7 +12,7 @@ public class ClassRoom {
     @Column(name = "name")
     private String class_name;
     @Column(name = "number_member")
-    private Integer number_member;
+    private Integer number_member = 0;
 
     public ClassRoom(Integer id_class, String class_name, Integer number_member) {
         this.id_class = id_class;
