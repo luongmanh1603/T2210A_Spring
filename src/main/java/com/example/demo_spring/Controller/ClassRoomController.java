@@ -66,6 +66,7 @@ package com.example.demo_spring.Controller;
 
 import com.example.demo_spring.Service.ClassRoomService;
 import com.example.demo_spring.enity.ClassRoom;
+import com.example.demo_spring.enity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -97,6 +98,18 @@ public class ClassRoomController {
         model.addAttribute("classRooms", classRooms);
         return "classroom/index";
     }
+    @GetMapping("detail/{id}")
+    public  String getClassRoomById(@PathVariable Integer id, Model model) {
+        ClassRoom classRoom = classRoomService.getClassRoomWithStudentCount(id);
+        if (classRoom != null) {
+            List<Student> students = classRoomService.getStudentsByClassRoomId(id);
+            model.addAttribute("classRoom", classRoom);
+            model.addAttribute("students", students);
+            return "classroom/detail_classroom";
+        } else {
+            return "redirect:/classrooms";
+        }
+    }
 
 
     @GetMapping("/create")
@@ -116,7 +129,7 @@ public class ClassRoomController {
             model.addAttribute("classRoom", classRoomOptional.get());
             return "classroom/edit_class";
         } else {
-            return "redirect:/classrooms/list";
+            return "redirect:/classrooms";
         }
     }
     @PostMapping("/edit/{id}")
@@ -128,12 +141,12 @@ public class ClassRoomController {
 
             classRoomService.saveClassRoom(updatedClassRoom);
         }
-        return "redirect:/classrooms/list";
+        return "redirect:/classrooms";
     }
     @GetMapping("/delete/{id}")
     public String deleteClassRoom(@PathVariable Integer id) {
         classRoomService.deleteClassRoom(id);
-        return "redirect:/classrooms/list";
+        return "redirect:/classrooms";
     }
 
 

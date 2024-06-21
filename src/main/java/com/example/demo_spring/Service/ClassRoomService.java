@@ -1,7 +1,9 @@
 package com.example.demo_spring.Service;
 
 import com.example.demo_spring.Repo.ClassRoomRepository;
+import com.example.demo_spring.Repo.StudentRepository;
 import com.example.demo_spring.enity.ClassRoom;
+import com.example.demo_spring.enity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,14 @@ import java.util.Optional;
 public class ClassRoomService {
     @Autowired
     private ClassRoomRepository classRoomRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    public ClassRoomService(ClassRoomRepository classRoomRepository, StudentRepository studentRepository) {
+        this.classRoomRepository = classRoomRepository;
+        this.studentRepository = studentRepository;
+    }
 
     public List<ClassRoom> getAllClassRooms() {
         return classRoomRepository.findAll();
@@ -36,5 +46,8 @@ public class ClassRoomService {
             classRoom.setNumber_member(studentCount.intValue());
         }
         return classRoom;
+    }
+    public List<Student> getStudentsByClassRoomId(Integer id_class) {
+        return classRoomRepository.findStudentsInClass(id_class);
     }
 }

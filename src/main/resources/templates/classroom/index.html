@@ -24,7 +24,7 @@
         <tbody>
         <tr th:each="classRoom : ${classRooms}">
             <td th:text="${classRoom.id_class}"></td>
-            <td th:text="${classRoom.class_name}"></td>
+            <td><a th:href="@{/classrooms/detail/{id}(id=${classRoom.id_class})}" th:text="${classRoom.class_name}"></a></td>
             <td th:text="${classRoom.number_member}"></td>
             <td>
                 <a th:href="@{/classrooms/edit/{id}(id=${classRoom.id_class})}" class="btn btn-primary btn-sm">Edit</a>
