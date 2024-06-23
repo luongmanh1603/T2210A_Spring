@@ -86,6 +86,8 @@ public class StudentController {
     @GetMapping("/create")
     public String showStudentForm(Model model) {
         model.addAttribute("student", new Student());
+        List<ClassRoom> classRooms = classRoomService.getAllClassRooms();
+        model.addAttribute("classRooms", classRooms);
         return "students/add_student";
     }
     @PostMapping("/create")
@@ -102,6 +104,8 @@ public class StudentController {
     }
     @GetMapping("/edit/{id}")
     public String editStudent(@PathVariable Long id, Model model) {
+        List<ClassRoom> classRooms = classRoomService.getAllClassRooms();
+        model.addAttribute("classRooms", classRooms);
         Optional<Student> studentOptional = studentService.getStudentById(id);
         if (studentOptional.isPresent()) {
             model.addAttribute("student", studentOptional.get());

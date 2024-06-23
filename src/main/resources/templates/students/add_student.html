@@ -25,8 +25,11 @@
             <input type="text" th:field="*{age}" class="form-control" id="age" placeholder="Enter Age">
         </div>
         <div class="form-group">
-            <label for="idClass">Id Class</label>
-            <input type="text" th:field="*{classRoom.id_class}" class="form-control" id="idClass" placeholder="Enter ID Class">
+            <label for="idClass">Class</label>
+            <select th:field="*{classRoom.id_class}" class="form-control" id="idClass">
+<!--                <option value="">Select Class</option>-->
+                <option th:each="classRoom : ${classRooms}" th:value="${classRoom.id_class}" th:text="${classRoom.class_name}" ></option>
+            </select>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

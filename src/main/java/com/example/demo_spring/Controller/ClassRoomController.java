@@ -72,6 +72,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -144,9 +145,15 @@ public class ClassRoomController {
         return "redirect:/classrooms";
     }
     @GetMapping("/delete/{id}")
-    public String deleteClassRoom(@PathVariable Integer id) {
-        classRoomService.deleteClassRoom(id);
-        return "redirect:/classrooms";
+    public String deleteClassRoom(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        List<Student> students = classRoomService.getStudentsByClassRoomId(id);
+        if (students.isEmpty()) {
+            classRoomService.deleteClassRoom(id);
+            return "redirect:/classrooms";
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Cannot delete class because it has students.");
+            return "redirect:/classrooms";
+        }
     }
 
 
