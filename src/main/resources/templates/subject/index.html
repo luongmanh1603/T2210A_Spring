@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subjects</title>
+    <th:block th:include="/include/head"></th:block></head>
+</head>
+<body>
+<div th:replace="fragments/header:: headerUser"></div>
+
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Subjects List</h1>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+        <button style="border: none; float: right;margin-bottom:10px" class="btn btn-primary"><a style="text-decoration: none; color: white; float: right;" href="/subjects/create">+ Create</a> </button>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Credit</th>
+
+            <th>Action</th>
+            <!-- Add more columns as needed -->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="subject : ${subjects}">
+            <td th:text="${subject.code}"></td>
+            <td th:text="${subject.name}"></td>
+            <td th:text="${subject.credit}"></td>
+
+
+<!--            <td>-->
+<!--                <a  th:href="@{/subjects/edit/{id}(id=${subject.id})}" class="btn btn-primary btn-sm">Edit</a>-->
+
+<!--                <a th:href="@{/subjects/delete/{id}(id=${subject.id})}" class="btn btn-danger btn-sm">Delete</a>-->
+<!--            </td>-->
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<th:block th:include="/include/footer"></th:block></head>
+</body>
+</html>

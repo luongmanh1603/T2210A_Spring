@@ -18,10 +18,7 @@ public class ClassRoomService {
     @Autowired
     private StudentRepository studentRepository;
 
-    public ClassRoomService(ClassRoomRepository classRoomRepository, StudentRepository studentRepository) {
-        this.classRoomRepository = classRoomRepository;
-        this.studentRepository = studentRepository;
-    }
+
 
     public List<ClassRoom> getAllClassRooms() {
         return classRoomRepository.findAll();
@@ -38,16 +35,24 @@ public class ClassRoomService {
     public void deleteClassRoom(Integer id) {
         classRoomRepository.deleteById(id);
     }
-    //lay so luong hoc sinh trong lop
-    public ClassRoom getClassRoomWithStudentCount(Integer id) {
-        ClassRoom classRoom = classRoomRepository.findById(id).orElse(null);
-        if (classRoom != null) {
-            Long studentCount = classRoomRepository.countStudentsInClass(id);
-            classRoom.setNumber_member(studentCount.intValue());
-        }
-        return classRoom;
+    public ClassRoom getClassRoomByName(String name) {
+        return classRoomRepository.findByClass_name(name);
     }
-    public List<Student> getStudentsByClassRoomId(Integer id_class) {
-        return classRoomRepository.findStudentsInClass(id_class);
+    public ClassRoom getClassRoomWithStudents(Integer classId) {
+        Optional<ClassRoom> classRoomOptional = classRoomRepository.findById(classId);
+        if (classRoomOptional.isPresent()) {
+            ClassRoom classRoom = classRoomOptional.get();
+            classRoom.setStudents(classRoomRepository.findStudentsInClass(classId));
+            return classRoom;
+        }
+        return null;
+    }
+
+    public boolean hasStudents(Integer id) {
+        Optional<ClassRoom> classRoom = getClassRoomById(id);
+        if (classRoom.isPresent()) {
+            return !classRoom.get().getStudents().isEmpty();
+        }
+        return false;
     }
 }

@@ -1,28 +1,38 @@
 //package com.example.demo_spring.Controller;
 //
 //import com.example.demo_spring.Service.ClassRoomService;
+//import com.example.demo_spring.dto.ClassRoomDTO;
 //import com.example.demo_spring.enity.ClassRoom;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.http.ResponseEntity;
 //import org.springframework.web.bind.annotation.*;
 //
-//import java.util.List;
-//import java.util.Optional;
+//import java.util.*;
 //
 //@RestController
 //@RequestMapping("/api/classrooms")
+//@CrossOrigin(origins = "http://localhost:3000")
 //public class ClassRoomController {
 //    @Autowired
 //    private ClassRoomService classRoomService;
 //
 //    @GetMapping
-//    public List<ClassRoom> getAllClassRooms() {
-//        return classRoomService.getAllClassRooms();
+//    public List<ClassRoomDTO> getAllClassRooms() {
+//        List<ClassRoom> classRooms = classRoomService.getAllClassRooms();
+//        List<ClassRoomDTO> classRoomDTOS = new ArrayList<>();
+//        for (ClassRoom classRoom : classRooms) {
+//            ClassRoomDTO classRoomDTO = new ClassRoomDTO();
+//            classRoomDTO.setId(classRoom.getId_class());
+//            classRoomDTO.setClass_name(classRoom.getClass_name());
+//            classRoomDTO.setNumber_member(classRoom.getNumber_member());
+//            classRoomDTOS.add(classRoomDTO);
+//        }
+//        return classRoomDTOS;
 //    }
 //
 //    @GetMapping("/{id}")
 //    public ResponseEntity<ClassRoom> getClassRoomById(@PathVariable Integer id) {
-//        ClassRoom classRoom = classRoomService.getClassRoomWithStudentCount(id);
+//        ClassRoom classRoom = classRoomService.getClassRoomById(id).orElse(null);
 //        if (classRoom != null) {
 //            return ResponseEntity.ok(classRoom);
 //        } else {
@@ -31,8 +41,19 @@
 //    }
 //
 //    @PostMapping
-//    public ClassRoom createClassRoom(@RequestBody ClassRoom classRoom) {
-//        return classRoomService.saveClassRoom(classRoom);
+//    public ResponseEntity<?> createClassRoom(@RequestBody ClassRoom classRoom) {
+//        // Kiểm tra xem có ClassRoom nào có cùng tên đã tồn tại chưa
+//        ClassRoom existingClassRoom = classRoomService.getClassRoomByName(classRoom.getClass_name());
+//        if (existingClassRoom != null) {
+//            // Nếu có, trả về một lỗi
+//            return ResponseEntity.badRequest().body("A ClassRoom with the same name already exists.");
+//        } else {
+//            ClassRoom savedClassRoom = classRoomService.saveClassRoom(classRoom);
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("message", "ClassRoom has been created successfully");
+//            response.put("classRoom", savedClassRoom);
+//            return ResponseEntity.ok(response);
+//        }
 //    }
 //
 //    @PutMapping("/{id}")
@@ -41,7 +62,7 @@
 //        if (classRoom.isPresent()) {
 //            ClassRoom updatedClassRoom = classRoom.get();
 //            updatedClassRoom.setClass_name(classRoomDetails.getClass_name());
-//            updatedClassRoom.setNumber_member(classRoomDetails.getNumber_member());
+//
 //            classRoomService.saveClassRoom(updatedClassRoom);
 //            return ResponseEntity.ok(updatedClassRoom);
 //        } else {
@@ -50,18 +71,24 @@
 //    }
 //
 //    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteClassRoom(@PathVariable Integer id) {
-//        if (classRoomService.getClassRoomById(id).isPresent()) {
-//            classRoomService.deleteClassRoom(id);
-//            return ResponseEntity.ok().build();
-//        } else {
+//    public ResponseEntity<?> deleteClassRoom(@PathVariable Integer id) {
+//        if (!classRoomService.getClassRoomById(id).isPresent()) {
 //            return ResponseEntity.notFound().build();
 //        }
+//
+//        // Kiểm tra xem lớp học có học sinh không
+//        if (classRoomService.hasStudents(id)) {
+//            // Trả về một phản hồi không cho phép xóa vì lớp học vẫn còn học sinh
+//            return ResponseEntity.badRequest().body("Cannot delete class room as it still has students.");
+//        }
+//
+//        classRoomService.deleteClassRoom(id);
+//        return ResponseEntity.ok().build();
 //    }
 //}
-//
 
-//MVC
+
+////MVC
 package com.example.demo_spring.Controller;
 
 import com.example.demo_spring.Service.ClassRoomService;
@@ -91,7 +118,7 @@ public class ClassRoomController {
     public String getClassRoomList(Model model) {
         List<ClassRoom> classRooms = classRoomService.getAllClassRooms();
         for (ClassRoom classRoom : classRooms) {
-            ClassRoom updatedClassRoom = classRoomService.getClassRoomWithStudentCount(classRoom.getId_class());
+            ClassRoom updatedClassRoom = classRoomService.getClassRoomWithStudents(classRoom.getId_class());
             if (updatedClassRoom != null) {
                 classRoom.setNumber_member(updatedClassRoom.getNumber_member());
             }
@@ -101,9 +128,9 @@ public class ClassRoomController {
     }
     @GetMapping("detail/{id}")
     public  String getClassRoomById(@PathVariable Integer id, Model model) {
-        ClassRoom classRoom = classRoomService.getClassRoomWithStudentCount(id);
+        ClassRoom classRoom = classRoomService.getClassRoomWithStudents(id);
         if (classRoom != null) {
-            List<Student> students = classRoomService.getStudentsByClassRoomId(id);
+            List<Student> students = classRoom.getStudents();
             model.addAttribute("classRoom", classRoom);
             model.addAttribute("students", students);
             return "classroom/detail_classroom";
@@ -146,7 +173,7 @@ public class ClassRoomController {
     }
     @GetMapping("/delete/{id}")
     public String deleteClassRoom(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        List<Student> students = classRoomService.getStudentsByClassRoomId(id);
+        List<Student> students = classRoomService.getClassRoomWithStudents(id).getStudents();
         if (students.isEmpty()) {
             classRoomService.deleteClassRoom(id);
             return "redirect:/classrooms";

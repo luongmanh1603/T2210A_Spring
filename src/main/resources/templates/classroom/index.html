@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Class Room</title>
-    <th:block th:include="/include/head"></th:block></head>
+     <th:block th:replace="fragments/head"></th:block>
 <body>
-<th:block th:include="/include/header"></th:block>
+
+<div th:replace="fragments/header:: headerUser"></div>
 <h1>List Classrooms</h1>
 <div th:if="${errorMessage}" class="alert alert-warning" role="alert">
     <p th:text="${errorMessage}"></p>
@@ -38,6 +39,6 @@
     </table>
 </div>
 
-<th:block th:include="/include/footer"></th:block>
+<th:block th:replace="fragments/footer"></th:block>
 </body>
 </html>

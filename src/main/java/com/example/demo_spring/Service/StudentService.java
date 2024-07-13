@@ -2,6 +2,7 @@ package com.example.demo_spring.Service;
 
 import com.example.demo_spring.Repo.StudentRepository;
 import com.example.demo_spring.dto.StudentDTO;
+import com.example.demo_spring.enity.ClassRoom;
 import com.example.demo_spring.enity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,8 @@ import java.util.Optional;
 public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private ClassRoomService classRoomService;
 
     public List<Student> getAllStudents() {
         return studentRepository.findAll();
@@ -21,7 +24,12 @@ public class StudentService {
         return studentRepository.findById(id);
     }
     public Student saveStudent(Student student) {
-        return studentRepository.save(student);
+        Student savedStudent = studentRepository.save(student);
+        ClassRoom classRoom = savedStudent.getClassRoom();
+        classRoom.updateNumberMember();
+        classRoomService.saveClassRoom(classRoom);
+        savedStudent.setClassRoom(classRoom); // Update the student with the updated class room
+        return studentRepository.save(savedStudent); // Save the student again with the updated class room
     }
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);

@@ -15,5 +15,7 @@ public interface ClassRoomRepository  extends JpaRepository<ClassRoom,Integer> {
     Long countStudentsInClass(@Param("classId") Integer classId);
     @Query("SELECT s FROM Student s WHERE s.classRoom.id_class = :classId")
     List<Student> findStudentsInClass(@Param("classId") Integer classId);
+    @Query("SELECT c FROM ClassRoom c WHERE c.class_name = :className")
+    ClassRoom findByClass_name(@Param("className") String class_name);
 
 }
